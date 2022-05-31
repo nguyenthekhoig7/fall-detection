@@ -62,8 +62,10 @@ def detect(model, lm_list):
     results = model.predict(lm_list)
     if results[0] == 1:
         label = "Fall"
-    else:
+    elif results[0] == 0:
         label = "No Fall"
+    else:
+        label = 'Unknown'
     return label
 
 
@@ -83,7 +85,8 @@ while True:
             lm_list = []
 
         img = draw_landmark_on_image(mpDraw, results, img)
-
+    else:
+        label = 'No skeleton detected'
     img = draw_class_on_image(label, img)
     cv2.imshow("Test", img)
     if cv2.waitKey(1) == ord('q'):
