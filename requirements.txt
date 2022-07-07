@@ -1,6 +1,9 @@
+fastapi
+starlette
+opencv-python--headless
 mediapipe
 numpy
-opencv-python
-pandas
-fsspec
-matplotlib
+thread6
+joblib
+uvicorn
+protobuf==3.20.1
