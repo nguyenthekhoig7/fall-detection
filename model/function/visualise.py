@@ -48,7 +48,7 @@ class Visualise:
 
         plt.title('ROC curve')
         plt.plot(false_positive_rate, true_positive_rate,
-                 'b', label='AUC = %0.2f' % roc_auc)
+                 'b', label='AUC = %0.2f' % roc_auc, marker='.')
         plt.legend(loc='lower right')
         plt.plot([0, 1], [0, 1], 'r--')
         plt.xlim([-0.1, 1.2])
