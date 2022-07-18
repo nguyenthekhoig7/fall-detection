@@ -105,8 +105,8 @@ def get_labels(videoPath: str):
         # cv2.imshow("Test", img)
 
         vidtime = time.time()-start_time
-        print(vidtime)  # , ': ', label)
         detect_results[vidtime] = label
+        print(vidtime, detect_results[vidtime])  # , ': ', label)
 
         if cv2.waitKey(1) == ord('q'):
             break
