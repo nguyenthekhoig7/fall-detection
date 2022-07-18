@@ -1,5 +1,5 @@
 from fastapi import FastAPI, File, UploadFile
-from starlette.responses import HTMLResponse 
+from starlette.responses import HTMLResponse
 import cv2
 import mediapipe as mp
 import numpy as np
@@ -9,17 +9,18 @@ import time
 import shutil
 import json
 
-### functions for detecting falls from a video
+# functions for detecting falls from a video
 
 label = ""
 n_time_steps = 1
-global lm_list 
+global lm_list
 # lm_list = []
 mpPose = mp.solutions.pose
 pose = mpPose.Pose()
 mpDraw = mp.solutions.drawing_utils
 # model = joblib.load('C://fall-urdataset-csv//model//model_final.sav')
 model = joblib.load('model_final.sav')
+
 
 def make_landmark_timestep(results):
     c_lm = []
@@ -57,6 +58,7 @@ def draw_class_on_image(label, img):
                 lineType)
     return img
 
+
 def detect(model, lm_list):
     global label
     lm_list = np.array(lm_list)
@@ -68,6 +70,7 @@ def detect(model, lm_list):
     else:
         label = 'Unknown'
     return label
+
 
 def get_labels(videoPath: str):
 
@@ -95,16 +98,16 @@ def get_labels(videoPath: str):
                 t1.start()
                 lm_list = []
 
-            img = draw_landmark_on_image(mpDraw, results, img)
+            # img = draw_landmark_on_image(mpDraw, results, img)
         else:
             label = 'No skeleton detected'
-        img = draw_class_on_image(label, img)
-        cv2.imshow("Test", img)
+        # img = draw_class_on_image(label, img)
+        # cv2.imshow("Test", img)
 
         vidtime = time.time()-start_time
-        print(vidtime)#, ': ', label)
+        print(vidtime)  # , ': ', label)
         detect_results[vidtime] = label
-        
+
         if cv2.waitKey(1) == ord('q'):
             break
 
@@ -113,13 +116,15 @@ def get_labels(videoPath: str):
 
     return detect_results
 
-### The app
+
+# The app
 app = FastAPI()
 
 
-@app.get('/') #basic get view
+@app.get('/')  # basic get view
 def basic_view():
     return {"WELCOME": "GO TO /file please"}
+
 
 @app.get('/file', response_class=HTMLResponse)
 def upload_file():
@@ -130,21 +135,17 @@ def upload_file():
     # <input type="text" maxlength="28" name="text" value="Text Emotion to be tested"/>
 
 
-
-@app.post('/file') #text: str = Form(...), 
+@app.post('/file')  # text: str = Form(...),
 def handle_file(upfile: UploadFile = File(...)):
 
     with open('video.mp4', 'wb') as buffer:
         shutil.copyfileobj(upfile.file, buffer)
 
-    detect_results = get_labels('video.mp4') # a dictionary
+    detect_results = get_labels('video.mp4')  # a dictionary
 
-
-    return {"Name of UpFile" : upfile.filename, 
-            "File Content Type": upfile.content_type, 
+    return {"Name of UpFile": upfile.filename,
+            "File Content Type": upfile.content_type,
             "Labels": json.dumps(detect_results, indent=4)}
 
     # return_str = "Name of UpFile: " + str(upfile.filename) + "\nFile Content Type: " + str(upfile.content_type) + "\nLabels" + json.dumps(detect_results, indent=4)
     # return return_str
-
-
